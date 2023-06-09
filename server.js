@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const expressWs = require("express-ws");
+const resizeVideo = require("./utils/resizeVideo");
 const fs = require("fs");
 const app = express();
 
@@ -19,9 +20,19 @@ app.get("/", (req, res) => {
 
 app.ws("/upload", (ws, req) => {
   ws.on("message", async (videobuffer) => {
-    const videoPath = path.join(__dirname, `./public/temp/${+new Date()}`);
+    const filename = +new Date();
+    const videoPath = path.join(__dirname, `./public/temp/${filename}`);
     await fs.promises.writeFile(videoPath, videobuffer);
     ws.send(JSON.stringify({ uploaded: true }));
+    const sizes = [480, 360];
+    const result = [];
+    for (const size of sizes) {
+      const outputUrl = `/${filename}-${size}.mp4`;
+      const outputPath = path.join(__dirname, `./public${outputUrl}`);
+      await resizeVideo(videoPath, size, outputPath);
+      result.push(outputPath);
+    }
+    ws.send(JSON.stringify({ resized: true, result }));
   });
 });
 

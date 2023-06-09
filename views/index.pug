@@ -12,7 +12,7 @@ html(lang="en")
           h1 UPLOAD VIDEO
           form#formupload(action="")
             input#inputupload.form-control(type="file" accept="video/*" required)
-            button.btn.btn-primary.mt-3 UPLOAD
+            button#submitbtn.btn.btn-primary.mt-3 UPLOAD
           #progressUpload.progress.mt-3.d-none
             #progressbarUpload.progress-bar.progress-bar-striped.progress-bar-animated(style="width:0%")
     script(src="/upload.js")
